@@ -111,34 +111,34 @@ contract MultiSigWallet {
 
       //Create variable transaction using storage (which creates a reference point)
       //YOUR CODE HERE
-
+      Transaction storage t = _transactions[_pendingTransactions[transactionId]];
       // Transaction must exist, note: use require(), but can't do require(transaction), .
       //YOUR CODE HERE
-
+      require(t.source != address(0x0));
       // Creator cannot sign the transaction, use require()
       //YOUR CODE HERE
-
+      require(t.source != msg.sender);
       // Cannot sign a transaction more than once, use require()
       //YOUR CODE HERE
-
+      require(t.signatures[msg.sender] == 0);
       // assign the transaction = 1, so that when the function is called again it will fail
       //YOUR CODE HERE
-
+      t.signatureCount = 1;
       // increment signatureCount
       //YOUR CODE HERE
-
+      t.signatureCount += 1;
       // log transaction
       //YOUR CODE HERE
-
+      TransactionSigned(msg.sender, transactionID);
       //  check to see if transaction has enough signatures so that it can actually be completed
       // if true, make the transaction. Don't forget to log the transaction was completed.
       if (transaction.signatureCount >= MIN_SIGNATURES) {
         require(address(this).balance >= transaction.value); //validate transaction
         //YOUR CODE HERE
-
+        t.destination.send(t.value);
         //log that the transaction was complete
         //YOUR CODE HERE
-
+        TransactionCompleted(t.source, t.destination, t.value, transactionID);
         //end with a call to deleteTransaction
         deleteTransaction(transactionId);
       }
