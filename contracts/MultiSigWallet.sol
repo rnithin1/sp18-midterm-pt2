@@ -53,7 +53,7 @@ contract MultiSigWallet {
 
     /// @dev remove suspicious owners
     function removeOwner(address existingOwner) isOwner public {
-        _owners[newOwner] = 0;
+        _owners[existingOwner] = 0;
     }
 
     /// @dev Fallback function, which accepts ether when sent to contract
@@ -62,8 +62,8 @@ contract MultiSigWallet {
     }
 
     function withdraw(uint amount) validOwner public {
-      require(address(this).balance >= value);
-      msg.sender.send(amount);
+      require(address(this).balance >= amount);
+      msg.sender.transfer(amount);
     }
 
     /// @dev Send ether to specific a transaction
@@ -111,22 +111,22 @@ contract MultiSigWallet {
 
       //Create variable transaction using storage (which creates a reference point)
       //YOUR CODE HERE
-      Transaction storage t = _transactions[_pendingTransactions[transactionId]];
+      Transaction storage transaction = _transactions[_pendingTransactions[transactionID]];
       // Transaction must exist, note: use require(), but can't do require(transaction), .
       //YOUR CODE HERE
-      require(t.source != address(0x0));
+      require(transaction.source != address(0x0));
       // Creator cannot sign the transaction, use require()
       //YOUR CODE HERE
-      require(t.source != msg.sender);
+      require(transaction.source != msg.sender);
       // Cannot sign a transaction more than once, use require()
       //YOUR CODE HERE
-      require(t.signatures[msg.sender] == 0);
+      require(transaction.signatures[msg.sender] == 0);
       // assign the transaction = 1, so that when the function is called again it will fail
       //YOUR CODE HERE
-      t.signatureCount = 1;
+      transaction.signatureCount = 1;
       // increment signatureCount
       //YOUR CODE HERE
-      t.signatureCount += 1;
+      transaction.signatureCount += 1;
       // log transaction
       //YOUR CODE HERE
       TransactionSigned(msg.sender, transactionID);
@@ -135,12 +135,12 @@ contract MultiSigWallet {
       if (transaction.signatureCount >= MIN_SIGNATURES) {
         require(address(this).balance >= transaction.value); //validate transaction
         //YOUR CODE HERE
-        t.destination.send(t.value);
+        transaction.destination.transfer(transaction.value);
         //log that the transaction was complete
         //YOUR CODE HERE
-        TransactionCompleted(t.source, t.destination, t.value, transactionID);
+        TransactionCompleted(transaction.source, transaction.destination, transaction.value, transactionID);
         //end with a call to deleteTransaction
-        deleteTransaction(transactionId);
+        deleteTransaction(transactionID);
       }
     }
 
