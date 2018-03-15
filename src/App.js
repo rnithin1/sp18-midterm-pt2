@@ -77,6 +77,7 @@ class App extends Component {
         /// list of events we are tracking in the state object. REMEMBER TO USE 'that'
         /// instead of 'this'. You can use 'that.state.item' to access 'item' from the state
         /// and 'that.setState({item: value})' to reset the value of 'item' to 'value'
+        that.setState({events : that.state.events.concat([result.event])});
       }
     })
 
@@ -85,6 +86,7 @@ class App extends Component {
         console.log(error);
       } else {
         /// YOUR CODE HERE -- same instructions as above
+        that.setState({events : that.state.events.concat([result.event])});
       }
     })
 
@@ -93,6 +95,7 @@ class App extends Component {
         console.log(error);
       } else {
         /// YOUR CODE HERE -- same instructions as above
+        that.setState({events : that.state.events.concat([result.event])});
       }
     })
 
@@ -101,6 +104,7 @@ class App extends Component {
         console.log(error);
       } else {
         /// YOUR CODE HERE -- same instructions as above
+        that.setState({events : that.state.events.concat([result.event])});
       }
     })
   }
@@ -111,6 +115,7 @@ class App extends Component {
   /// function, which is documented here -- https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethsendtransaction
   sendEther() {
     /// YOUR CODE HERE. This should only be 1 line.
+    this.state.web3.eth.sendTransaction({from : 0x0, to : this.state.multiSigContract.address, value : 2})
   }
 
   render() {
