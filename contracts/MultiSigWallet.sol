@@ -35,10 +35,10 @@ contract MultiSigWallet {
     /// @dev logged events
     event DepositFunds(address source, uint amount);
     /// @dev full sequence of the transaction event logged
-    event TransactionCreated(address source, address destination, uint value, uint transactionID);
-    event TransactionCompleted(address source, address destination, uint value, uint transactionID);
+    event TransactionCreated(address source, address destination, uint value, uint transactionId);
+    event TransactionCompleted(address source, address destination, uint value, uint transactionId);
     /// @dev keeps track of who is signing the transactions
-    event TransactionSigned(address by, uint transactionID);
+    event TransactionSigned(address by, uint transactionId);
 
 
     /// @dev Contract constructor sets initial owners
@@ -73,7 +73,7 @@ contract MultiSigWallet {
     /// Start by creating your transaction. Since we defined it as a struct,
     /// we need to define it in a memory context. Update the member attributes.
     ///
-    /// note, keep transactionID updated
+    /// note, keep transactionId updated
     function transferTo(address destination, uint value) validOwner public {
       require(address(this).balance >= value);
       //YOUR CODE HERE
@@ -102,7 +102,7 @@ contract MultiSigWallet {
     /// @dev Allows an owner to confirm a transaction.
     /// @param transactionId Transaction ID.
     /// Sign and Execute transaction.
-    function signTransaction(uint transactionID) validOwner public {
+    function signTransaction(uint transactionId) validOwner public {
       //Use Transaction Structure. Above in TransferTo function, because
       //we created the structure, we had to specify the keyword memory.
       //Now, we are pulling in the structure from a storage mechanism
@@ -111,7 +111,7 @@ contract MultiSigWallet {
 
       //Create variable transaction using storage (which creates a reference point)
       //YOUR CODE HERE
-      Transaction storage transaction = _transactions[_pendingTransactions[transactionID]];
+      Transaction storage transaction = _transactions[_pendingTransactions[transactionId]];
       // Transaction must exist, note: use require(), but can't do require(transaction), .
       //YOUR CODE HERE
       require(transaction.source != address(0x0));
@@ -129,7 +129,7 @@ contract MultiSigWallet {
       transaction.signatureCount += 1;
       // log transaction
       //YOUR CODE HERE
-      TransactionSigned(msg.sender, transactionID);
+      TransactionSigned(msg.sender, transactionId);
       //  check to see if transaction has enough signatures so that it can actually be completed
       // if true, make the transaction. Don't forget to log the transaction was completed.
       if (transaction.signatureCount >= MIN_SIGNATURES) {
@@ -138,9 +138,9 @@ contract MultiSigWallet {
         transaction.destination.transfer(transaction.value);
         //log that the transaction was complete
         //YOUR CODE HERE
-        TransactionCompleted(transaction.source, transaction.destination, transaction.value, transactionID);
+        TransactionCompleted(transaction.source, transaction.destination, transaction.value, transactionId);
         //end with a call to deleteTransaction
-        deleteTransaction(transactionID);
+        deleteTransaction(transactionId);
       }
     }
 
